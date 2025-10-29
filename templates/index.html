@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="container">
+        <h1>Welcome to Smart Feedback System</h1>
+        <p class="hero-subtitle">Share your thoughts and help us improve our services</p>
+        
+        {% if not session.get('user_id') %}
+        <div class="hero-cards">
+            <div class="card">
+                <div class="card-icon">
+                    <img src="{{ url_for('static', filename='images/guest.png') }}" alt="Guest Feedback" style="width:100px; height:100px; position: relative;">
+                </div>
+                <h3>Guest User</h3>
+                <p>Submit feedback without creating an account</p>
+                <a href="{{ url_for('guest_feedback') }}" class="btn btn-primary">Give Feedback as Guest</a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <img src="{{ url_for('static', filename='images/user.png') }}" alt="Login" style="width:100px; height:100px;position: relative;">
+                </div>
+                <h3>Registered User</h3>
+                <p>Login to track your feedback history</p>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">Login</a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <img src="{{ url_for('static', filename='images/image.png') }}" alt="Sign Up" style="width:100px; height:100px; position: relative;">
+                </div>
+                <h3>New Here?</h3>
+                <p>Create an account to get started</p>
+                <a href="{{ url_for('register') }}" class="btn btn-success">Sign Up</a>
+            </div>
+        </div>
+        {% elif session.get('user_role')=="admin" %}
+        <div class="hero-cards">
+            
+            <div class="card">
+                <div class="card-icon">
+                    <img src="{{ url_for('static', filename='images/dashboard.png') }}" alt="Admin Dashboard" style="width:100px; height:100px; position: relative;">
+                </div>
+                <h3>Admin Dashboard</h3>
+                <p>see the feedback details</p>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">View Dashboard</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="hero-cards">
+            <div class="card">
+                <div class="card-icon">
+                           <img src="{{ url_for('static', filename='images/feedback.png') }}" alt="feedback" style="width:100px; height:100px; position: relative;">
+             
+                </div>
+                <h3>Submit Feedback</h3>
+                <p>Share your experience with us</p>
+                <a href="{{ url_for('user_feedback') }}" class="btn btn-primary">Submit Feedback</a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <img src="{{ url_for('static', filename='images/dashboard.png') }}" alt="dashboard" style="width:100px; height:100px; position: relative;">
+                </div>
+                <h3>My Dashboard</h3>
+                <p>View your feedback history</p>
+                <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">View Dashboard</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+        
+        <section class="how-it-works">
+  <div class="container">
+    <h2 class="section-title">How It Works</h2>
+    <div class="how-grid">
+
+      <div class="how-card">
+        <h3>
+            <img src="{{ url_for('static', filename='images/feedback.png') }}" alt="feedback" style="width:30px; height:30px; position: relative; top:5px; margin-right:10px;">
+            Smart Feedback Collection</h3>
+        <p>
+          A full-stack Flask web application that enables users to submit feedback with automatic sentiment analysis,
+          role-based access control, and comprehensive admin analytics dashboard.
+        </p>
+      </div>
+
+      <div class="how-card">
+        <h3>
+            <img src="{{ url_for('static', filename='images/role.png') }}" alt="role" style="width:30px; height:30px; position: relative; top:5px; margin-right:10px;">
+             Role-Based System</h3>
+        <p>
+          Supports three roles: Guest (anonymous feedback), Registered Users (personalized feedback history),
+          and Admin (analytics and management dashboard).
+        </p>
+      </div>
+
+      <div class="how-card">
+        <h3>
+            <img src="{{ url_for('static', filename='images/data.png') }}" alt="sentiment" style="width:30px; height:30px; position: relative; top:5px; margin-right:10px;">
+            Sentiment Analysis</h3>
+        <p>
+          Automatically analyzes feedback tone (Positive, Negative, Neutral) using TextBlob,
+          providing deep insights into user satisfaction trends.
+        </p>
+      </div>
+
+      <div class="how-card">
+        <h3>
+            <img src="{{ url_for('static', filename='images/dashboard.png') }}" alt="analytics" style="width:30px; height:30px; position: relative; top:5px; margin-right:10px;">
+            Admin Analytics Dashboard</h3>
+        <p>
+          Displays six interactive charts: Sentiment Pie, Donut, Category Bar, Rating Bar, Timeline, and Stacked Sentiment Chart — all powered by Chart.js 4.4.0.
+        </p>
+      </div>
+
+      <div class="how-card">
+        <h3>⭐ Intelligent Rating System</h3>
+        <p>
+          Interactive 5-star rating with smooth hover, click feedback, and automatic average score tracking.
+        </p>
+      </div>
+
+      <div class="how-card">
+        <h3>🔐 Security & Performance</h3>
+        <p>
+          Secure password hashing, email-based password reset, CSRF protection, and smooth 60fps UI rendering ensure a reliable and fast user experience.
+        </p>
+      </div>
+    </div>
+  </div>
+    
+</section>
+
+    
+<script>
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+</script>
+{% endblock %}

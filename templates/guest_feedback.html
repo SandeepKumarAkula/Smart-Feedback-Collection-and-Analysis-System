@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Guest Feedback - Feedback System{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container">
+    <div class="feedback-container">
+        <div class="card feedback-card">
+            <div class="card-header">
+                <h2>
+                  <img src="{{ url_for('static', filename='images/guest.png') }}" alt="guest" style="width:40px; height:40px; position: relative; top:10px; margin-right:10px;">
+                  Guest Feedback</h2>
+                <p>Share your thoughts with us anonymously</p>
+            </div>
+          
+            <form method="POST" action="{{ url_for('guest_feedback') }}">
+                <div class="form-group">
+                    <label for="name">Your Name (Optional) </label>
+                    <input type="text" id="name" name="name" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Your Email (Optional)</label>
+                    <input type="email" id="email" name="email" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">Select a category</option>
+                        <option value="Product">Product</option>
+                        <option value="Service">Service</option>
+                        <option value="Support">Support</option>
+                        <option value="Website">Website</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Your Feedback *</label>
+                    <textarea id="message" name="message" class="form-control" rows="5" required></textarea>
+                </div>
+                
+<div class="form-group">
+    <label for="rating">Rating (Optional)</label>
+    <div class="star-rating">
+  <input type="radio" id="s5" name="rating" value="5">
+  <label for="s5" title="5"></label>
+
+  <input type="radio" id="s4" name="rating" value="4">
+  <label for="s4" title="4"></label>
+
+  <input type="radio" id="s3" name="rating" value="3">
+  <label for="s3" title="3"></label>
+
+  <input type="radio" id="s2" name="rating" value="2">
+  <label for="s2" title="2"></label>
+
+  <input type="radio" id="s1" name="rating" value="1">
+  <label for="s1" title="1"></label>
+</div>
+
+</div>
+
+
+<style>
+.star-rating {
+  display: inline-flex;
+  gap: 6px;
+  flex-direction: row-reverse;
+  align-items: center;
+  user-select: none;
+}
+
+
+.star-rating input { display: none; }
+
+
+.star-rating-css label {
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #ddd;
+  transition: color .12s;
+ 
+}
+.star-rating label::before {
+  content: "☆";  
+}
+
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: #fbbf24;
+}
+.star-rating label:hover::before,
+.star-rating label:hover ~ label::before {
+  content: "★";
+}
+
+
+.star-rating input:checked + label::before,
+.star-rating input:checked + label,
+.star-rating input:checked + label ~ label::before,
+.star-rating input:checked + label ~ label {
+  content: "★";
+  color: #fbbf24;
+}
+</style>
+                
+                <button type="submit" class="btn btn-primary btn-block">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+</script>
+{% endblock %}

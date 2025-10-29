@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Feedback System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1 style="position: relative; padding-left: 60px;">
+            <img src="{{ url_for('static', filename='images/dashboard.png') }}" alt="dashboard" style="width:50px; height:50px; position: absolute; left: 0; top: 50%; transform: translateY(-50%);">
+
+            Admin Dashboard</h1>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">                                    <img src="{{ url_for('static', filename='images/feedback.png') }}" alt="Dashboard" style="width:100px; height:100px;position: relative;">
+</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.total }}</div>
+                <div class="stat-label">Total Feedbacks</div>
+            </div>
+        </div>
+        
+        <div class="stat-card positive">
+            <div class="stat-icon">
+                                    <img src="{{ url_for('static', filename='images/positive.png') }}" alt="positive" style="width:100px; height:100px;position: relative;">
+
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.positive }}</div>
+                <div class="stat-label">Positive</div>
+            </div>
+        </div>
+        
+        <div class="stat-card neutral">
+            <div class="stat-icon">
+                                    <img src="{{ url_for('static', filename='images/neutral.png') }}" alt="neutral" style="width:100px; height:100px;position: relative;">
+
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.neutral }}</div>
+                <div class="stat-label">Neutral</div>
+            </div>
+        </div>
+        
+        <div class="stat-card negative">
+            <div class="stat-icon">
+                                    <img src="{{ url_for('static', filename='images/negative.png') }}" alt="negative" style="width:100px; height:100px;position: relative;">
+
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.negative }}</div>
+                <div class="stat-label">Negative</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-header" style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="{{ url_for('static', filename='images/data.png') }}" 
+         alt="data" 
+         style="width:50px; height:50px;">
+    <h1 style="margin: 0;">Data Visualizations</h1>
+  </div>
+</div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3>Sentiment Distribution (Pie Chart)</h3>
+            <canvas id="sentimentPieChart"></canvas>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Sentiment Analysis (Donut Chart)</h3>
+            <canvas id="sentimentDonutChart"></canvas>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Category Breakdown (Bar Chart)</h3>
+            <canvas id="categoryBarChart"></canvas>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Rating Distribution (Bar Chart)</h3>
+            <canvas id="ratingBarChart"></canvas>
+        </div>
+        
+        <div class="chart-card full-width">
+            <h3>Feedback Timeline (Line Chart)</h3>
+            <canvas id="timelineLineChart"></canvas>
+        </div>
+        
+        <div class="chart-card full-width">
+            <h3>Category vs Sentiment (Stacked Bar Chart)</h3>
+            <canvas id="categoryStackedChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="section-header">
+        <h2>All Feedback</h2>
+    </div>
+    
+    {% if feedbacks %}
+    <div class="filter-panel">
+    <div class="filter-item">
+        <label for="sentimentFilter">Sentiment:</label>
+        <select id="sentimentFilter">
+            <option value="all" {% if sentiment_filter == 'all' %}selected{% endif %}>All</option>
+            <option value="positive" {% if sentiment_filter == 'positive' %}selected{% endif %}>Positive</option>
+            <option value="neutral" {% if sentiment_filter == 'neutral' %}selected{% endif %}>Neutral</option>
+            <option value="negative" {% if sentiment_filter == 'negative' %}selected{% endif %}>Negative</option>
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label for="typeFilter">Type:</label>
+        <select id="typeFilter">
+            <option value="all" {% if type_filter == 'all' %}selected{% endif %}>All</option>
+            <option value="user" {% if type_filter == 'user' %}selected{% endif %}>User</option>
+            <option value="guest" {% if type_filter == 'guest' %}selected{% endif %}>Guest</option>
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label for="feedbackLimit">Show entries:</label>
+        <select id="feedbackLimit">
+            <option value="5" {% if limit == 5 %}selected{% endif %}>5</option>
+            <option value="10" {% if limit == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if limit == 20 %}selected{% endif %}>20</option>
+            <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+            <option value="{{ stats.total }}">All</option>
+        </select>
+    </div>
+    <div class="filter-item">
+    <label for="sortFilter">Sort by:</label>
+    <select id="sortFilter">
+        <option value="new_to_old" {% if sort_order == 'new_to_old' %}selected{% endif %}>New to Old</option>
+        <option value="old_to_new" {% if sort_order == 'old_to_new' %}selected{% endif %}>Old to New</option>
+    </select>
+</div>
+
+</div>
+
+<script>
+function applyFilters() {
+    const sentiment = document.getElementById('sentimentFilter').value;
+    const type = document.getElementById('typeFilter').value;
+    const limit = document.getElementById('feedbackLimit').value;
+    const sort = document.getElementById('sortFilter').value;
+
+    window.location.href = `/admin-dashboard?sentiment=${sentiment}&type=${type}&limit=${limit}&sort=${sort}`;
+}
+
+document.getElementById('sentimentFilter').addEventListener('change', applyFilters);
+document.getElementById('typeFilter').addEventListener('change', applyFilters);
+document.getElementById('feedbackLimit').addEventListener('change', applyFilters);
+document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+</script>
+
+    <div class="feedback-grid">
+        {% for feedback in feedbacks %}
+        <div class="card feedback-item admin-feedback">
+            <div class="feedback-header">
+                <span class="badge badge-{{ feedback.sentiment.lower() }}">{{ feedback.sentiment }}</span>
+                <span class="feedback-date">{{ feedback.timestamp.strftime('%b %d, %Y') }}</span>
+            </div>
+            
+            <div class="feedback-user">
+                {% if feedback.user %}
+                    <strong>👤 User:</strong> {{ feedback.user.name }} ({{ feedback.user.email }})
+                {% else %}
+<strong>👥 Guest:</strong> 
+    {{ feedback.guest_name if feedback.guest_name else "Anonymous" }} 
+{% if feedback.guest_email %}
+    ({{ feedback.guest_email }})
+{% endif %}
+    {% endif %}
+            </div>
+            
+            <div class="feedback-category">
+                <strong>Category:</strong> {{ feedback.category }}
+            </div>
+            
+            {% if feedback.rating %}
+            <div class="feedback-rating">
+                <strong>Rating:</strong> {% for i in range(feedback.rating) %}⭐{% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="feedback-message">
+                {{ feedback.message }}
+            </div>
+            
+            <div class="feedback-actions">
+                <small>{{ feedback.timestamp.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                <form method="POST" action="{{ url_for('delete_feedback', id=feedback.id) }}" style="display: inline;" onsubmit="return confirmDelete(event, this);"
+>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No Feedback Available</h3>
+        <p>No feedback has been submitted yet.</p>
+    </div>
+    {% endif %}
+</div>
+<script>
+function confirmDelete(event, form) {
+    event.preventDefault(); // stop default submission
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This feedback will be permanently deleted!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e3342f",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit(); // submit form if confirmed
+        }
+    });
+
+    return false;
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/chart-data')
+        .then(response => response.json())
+        .then(data => {
+            const sentimentColors = {
+                'Positive': '#48bb78',
+                'Negative': '#f56565',
+                'Neutral': '#a0aec0'
+            };
+            
+            const categoryColors = [
+                '#667eea', '#764ba2', '#f093fb', '#4facfe', 
+                '#43e97b', '#fa709a', '#fee140', '#30cfd0'
+            ];
+            
+            const sentimentLabels = Object.keys(data.sentiment);
+            const sentimentValues = Object.values(data.sentiment);
+            const sentimentBgColors = sentimentLabels.map(label => sentimentColors[label]);
+            
+            new Chart(document.getElementById('sentimentPieChart'), {
+                type: 'pie',
+                data: {
+                    labels: sentimentLabels,
+                    datasets: [{
+                        data: sentimentValues,
+                        backgroundColor: sentimentBgColors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { 
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            new Chart(document.getElementById('sentimentDonutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: sentimentLabels,
+                    datasets: [{
+                        data: sentimentValues,
+                        backgroundColor: sentimentBgColors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { 
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+            
+            const categoryLabels = Object.keys(data.categories);
+            const categoryValues = Object.values(data.categories);
+            
+            new Chart(document.getElementById('categoryBarChart'), {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Feedback Count',
+                        data: categoryValues,
+                        backgroundColor: categoryColors.slice(0, categoryLabels.length),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+            
+            const ratingLabels = Object.keys(data.ratings);
+            const ratingValues = Object.values(data.ratings);
+            
+            new Chart(document.getElementById('ratingBarChart'), {
+                type: 'bar',
+                data: {
+                    labels: ratingLabels.map(r => r + ' Star' + (r > 1 ? 's' : '')),
+                    datasets: [{
+                        label: 'Rating Count',
+                        data: ratingValues,
+                        backgroundColor: '#fbbf24',
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+            
+            const timelineLabels = Object.keys(data.timeline);
+            const timelineValues = Object.values(data.timeline);
+            
+            new Chart(document.getElementById('timelineLineChart'), {
+                type: 'line',
+                data: {
+                    labels: timelineLabels,
+                    datasets: [{
+                        label: 'Feedback per Day',
+                        data: timelineValues,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#667eea',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+            
+            const categorySentiment = data.category_sentiment || {};
+            const stackedCategoryLabels = Object.keys(categorySentiment);
+            
+            const stackedData = {
+                labels: stackedCategoryLabels.length > 0 ? stackedCategoryLabels : categoryLabels,
+                datasets: [
+                    {
+                        label: 'Positive',
+                        data: stackedCategoryLabels.length > 0 
+                            ? stackedCategoryLabels.map(cat => categorySentiment[cat]['Positive'] || 0)
+                            : categoryLabels.map(() => 0),
+                        backgroundColor: sentimentColors['Positive']
+                    },
+                    {
+                        label: 'Neutral',
+                        data: stackedCategoryLabels.length > 0 
+                            ? stackedCategoryLabels.map(cat => categorySentiment[cat]['Neutral'] || 0)
+                            : categoryLabels.map(() => 0),
+                        backgroundColor: sentimentColors['Neutral']
+                    },
+                    {
+                        label: 'Negative',
+                        data: stackedCategoryLabels.length > 0 
+                            ? stackedCategoryLabels.map(cat => categorySentiment[cat]['Negative'] || 0)
+                            : categoryLabels.map(() => 0),
+                        backgroundColor: sentimentColors['Negative']
+                    }
+                ]
+            };
+            
+            new Chart(document.getElementById('categoryStackedChart'), {
+                type: 'bar',
+                data: stackedData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { 
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { 
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error loading chart data:', error));
+});
+</script>
+<script>
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+</script>
+{% endblock %}

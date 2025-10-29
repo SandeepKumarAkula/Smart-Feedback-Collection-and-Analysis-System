@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard - Feedback System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1 style="position: relative; padding-left: 60px;">
+            <img src="{{ url_for('static', filename='images/dashboard.png') }}" alt="dashboard" style="width:50px; height:50px; position: absolute; left: 0; top: 50%; transform: translateY(-50%);">
+
+             My Feedback Dashboard</h1>
+        <a href="{{ url_for('user_feedback') }}" class="btn btn-primary">Submit New Feedback</a>
+    </div>
+    
+    {% if feedbacks %}
+    <div class="filter-panel">
+    <div class="filter-item">
+        <label for="sentimentFilter">Sentiment:</label>
+        <select id="sentimentFilter">
+            <option value="all" {% if sentiment_filter == 'all' %}selected{% endif %}>All</option>
+            <option value="positive" {% if sentiment_filter == 'positive' %}selected{% endif %}>Positive</option>
+            <option value="neutral" {% if sentiment_filter == 'neutral' %}selected{% endif %}>Neutral</option>
+            <option value="negative" {% if sentiment_filter == 'negative' %}selected{% endif %}>Negative</option>
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label for="feedbackLimit">Show entries:</label>
+        <select id="feedbackLimit">
+            <option value="5" {% if limit == 5 %}selected{% endif %}>5</option>
+            <option value="10" {% if limit == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if limit == 20 %}selected{% endif %}>20</option>
+            <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+            <option value="all">All</option>
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label for="sortFilter">Sort by:</label>
+        <select id="sortFilter">
+            <option value="new_to_old" {% if sort_order == 'new_to_old' %}selected{% endif %}>New to Old</option>
+            <option value="old_to_new" {% if sort_order == 'old_to_new' %}selected{% endif %}>Old to New</option>
+        </select>
+    </div>
+</div>
+
+<script>
+function applyFilters() {
+    const sentiment = document.getElementById('sentimentFilter').value;
+    const limit = document.getElementById('feedbackLimit').value;
+    const sort = document.getElementById('sortFilter').value;
+
+    window.location.href = `/user-dashboard?sentiment=${sentiment}&limit=${limit}&sort=${sort}`;
+}
+
+document.getElementById('sentimentFilter').addEventListener('change', applyFilters);
+document.getElementById('feedbackLimit').addEventListener('change', applyFilters);
+document.getElementById('sortFilter').addEventListener('change', applyFilters);
+</script>
+
+    <div class="feedback-grid">
+        {% for feedback in feedbacks %}
+        <div class="card feedback-item">
+            <div class="feedback-header">
+                <span class="badge badge-{{ feedback.sentiment.lower() }}">{{ feedback.sentiment }}</span>
+                <span class="feedback-date">{{ feedback.timestamp.strftime('%b %d, %Y') }}</span>
+            </div>
+            
+            <div class="feedback-category">
+                <strong>Category:</strong> {{ feedback.category }}
+            </div>
+            
+            {% if feedback.rating %}
+            <div class="feedback-rating">
+                {% for i in range(feedback.rating) %}⭐{% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="feedback-message">
+                {{ feedback.message }}
+            </div>
+            
+            <div class="feedback-meta">
+                <small>Submitted on {{ feedback.timestamp.strftime('%B %d, %Y at %I:%M %p') }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No Feedback Yet</h3>
+        <p>You haven't submitted any feedback. Share your thoughts with us!</p>
+        <a href="{{ url_for('user_feedback') }}" class="btn btn-primary">Submit Your First Feedback</a>
+    </div>
+    {% endif %}
+</div>
+<script>
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+</script>
+{% endblock %}

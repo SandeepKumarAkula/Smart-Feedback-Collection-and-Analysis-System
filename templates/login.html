@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Feedback System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <div class="card auth-card">
+            <h2>
+                                  <img src="{{ url_for('static', filename='images/user.png') }}" alt="guest" style="width:40px; height:40px; position: relative; top:10px; margin-right:10px;">
+ Login</h2>
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            
+            <div class="auth-links">
+                <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+                <span>|</span>
+                <a href="{{ url_for('register') }}">Don't have an account? Sign Up</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+</script>
+{% endblock %}

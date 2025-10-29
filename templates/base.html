@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Feedback System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/rating.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+           <div class="nav-brand">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo">
+    <a href="{{ url_for('index') }}">Smart Feedback System</a>
+</div>
+
+            <div class="nav-menu">
+                {% if session.get('user_id') %}
+                    
+                    {% if session.get('user_role') == 'admin' %}
+                    <span class="nav-user">         <img src="{{ url_for('static', filename='images/user.png') }}" alt="user" style="width:20px; height:20px; position: relative; top:4px; margin-right:5px;"> {{ session.get('user_name') }}</span>
+    <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin Dashboard</a>
+{% else %}
+                       <span class="nav-user">         <img src="{{ url_for('static', filename='images/user.png') }}" alt="user" style="width:20px; height:20px; position: relative; top:4px; margin-right:5px;"> {{ session.get('user_name') }}</span>
+
+    <a href="{{ url_for('user_dashboard') }}" class="nav-link">My Dashboard</a>
+    <a href="{{ url_for('user_feedback') }}" class="nav-link">Submit Feedback</a>
+{% endif %}
+                    <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                {% else %}
+                                    <span class="nav-user">         <img src="{{ url_for('static', filename='images/guest.png') }}" alt="guest" style="width:20px; height:20px; position: relative; top:4px; margin-right:5px;">Guest</span>
+
+                
+
+                    <a href="{{ url_for('guest_feedback') }}" class="nav-link">Give Feedback</a>
+                    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('register') }}" class="nav-link">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    <section class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>
+            <img src="{{ url_for('static', filename='images/location.png') }}" alt="contact" style="width:30px; height:30px; position: relative; top:5px; margin-right:10px;">
+            Reach Us</h3>
+        <p>JNTUH College of Engineering, Manthani</p>
+        <p>Peddapalli District, Telangana, India</p>
+        <p>📧Email: <a href="mailto:kumarakula44@gmail.com">kumarakula44@gmail.com</a></p>
+        <p>📞Phone: +91 79816 86589</p>
+      </div>
+
+      <div class="contact-card">
+        <h3>🌐 Find Us On</h3>
+        <div class="social-links">
+          <a href="https://facebook.com" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook">
+          </a>
+          <a href="https://twitter.com" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="Twitter">
+          </a>
+          <a href="https://linkedin.com" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" alt="LinkedIn">
+          </a>
+          <a href="https://instagram.com" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram">
+          </a>
+          <a href="https://youtube.com" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Smart Feedback Collection System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+</script>
+
+
+
+</body>
+</html>

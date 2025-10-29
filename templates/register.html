@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Feedback System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <div class="card auth-card">
+            <h2>                  <img src="{{ url_for('static', filename='images/image.png') }}" alt="guest" style="width:40px; height:40px; position: relative; top:10px; margin-right:10px;">
+ Create Account</h2>
+            <form method="POST" action="{{ url_for('register') }}">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required minlength="6">
+                </div>
+                
+                <button type="submit" class="btn btn-success btn-block">Sign Up</button>
+            </form>
+            
+            <div class="auth-links">
+                <a href="{{ url_for('login') }}">Already have an account? Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+</script>
+{% endblock %}
