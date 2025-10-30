@@ -30,7 +30,7 @@ The Smart Feedback Collection and Analysis System is a full-stack web applicatio
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENT LAYER                             │
+│                         CLIENT LAYER (End User Interaction)                             │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
 │  │   Browser    │  │   Mobile     │  │   Tablet     │          │
 │  │  (Desktop)   │  │   Device     │  │   Device     │          │
@@ -42,7 +42,7 @@ The Smart Feedback Collection and Analysis System is a full-stack web applicatio
                              │ HTTPS
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      PRESENTATION LAYER                          │
+│      PRESENTATION LAYER (User Interface & Frontend)                          │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │              Flask Application (app.py)                   │   │
 │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐         │   │
@@ -54,7 +54,8 @@ The Smart Feedback Collection and Analysis System is a full-stack web applicatio
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                       BUSINESS LOGIC LAYER                       │
+│                       BUSINESS LOGIC LAYER
+                       (Core Functional Modules)
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
 │  │ Auth Manager │  │   Sentiment  │  │   Role-Based │          │
 │  │  (Sessions)  │  │   Analyzer   │  │   Access     │          │
@@ -83,7 +84,7 @@ The Smart Feedback Collection and Analysis System is a full-stack web applicatio
 ┌─────────────────────────────────────────────────────────────────┐
 │                       DATABASE LAYER                             │
 │  ┌──────────────────────────────────────────────────────────┐   │
-│  │              PostgreSQL Database (Neon)                   │   │
+│  │                                 │   │
 │  │  ┌────────────┐              ┌────────────┐             │   │
 │  │  │   users    │              │  feedback  │             │   │
 │  │  │   table    │              │   table    │             │   │
